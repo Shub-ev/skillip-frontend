@@ -167,7 +167,7 @@ const Navbar = () => {
             // Show login button if not logged in
             <Button
               sx={{ ...styles.button, ...styles.authButton, width: "auto" }}
-              onClick={() => navigate("/signin")}
+              onClick={() => navigate("/login")}
             >
               Sign Up | Login
             </Button>
@@ -298,7 +298,7 @@ const Navbar = () => {
                 <MenuItem 
                   onClick={() => {
                     handleMenuClose();
-                    navigate("/signin");
+                    navigate("/login");
                   }}
                   sx={{ ...styles.menuItem, ...styles.authButton }}
                 >

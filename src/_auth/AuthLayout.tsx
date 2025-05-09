@@ -6,7 +6,7 @@ const AuthLayout = () => {
     const navRoutes = ["/"];
     const location = useLocation();
 
-    return (
+    return ( 
         <>
             {navRoutes.includes(location.pathname) && <Navbar />}
             <Box maxWidth="xl" sx={{ maxWidth: "1446px", margin: "0 auto", padding: "0 7px" }}>

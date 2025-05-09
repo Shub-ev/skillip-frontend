@@ -40,7 +40,7 @@ const LoginPage = () => {
                 navigate('/');
             }, 500);
         } catch (err) {
-            setError("Login failed. " + err);
+            setError("Login failed !");
             setSuccess(false);
             setOpen(true);
         }

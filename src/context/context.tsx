@@ -30,7 +30,7 @@ const MyContext = createContext<ContextType | null>(null);
 // children: React nodes that will have access to context values
 export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize login state as false
-  const [isLogin, setIsLogin] = useState<boolean | null>(false);
+  const [isLogin, setIsLogin] = useState<boolean | null>(localStorage.getItem("token") != "" || false);
   const [user, setUser] = useState<UserInterface | null>(null);
 
   // default profile image URL
@@ -38,36 +38,15 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   const defaultProfileImage = "/images/user.png";
 
   useEffect(() => {
-    try{
-      const token = localStorage.getItem("token");
-      if(token){
-        setIsLogin(true);
-        const user = JSON.parse(token);
-        setUser(user);
-      }
-      else{
-        setIsLogin(false);
-      }
+    if(isLogin){
+      setUser(JSON.parse(localStorage.getItem("token") || ""));
     }
-    catch(error){
-      console.error("Error accessing localStorage:", error);
-    }
-  }, []);
+  }, [])
 
-  // Effect hook to check authentication status
-  // Runs when isLogin changes
-  // Checks localStorage for token and updates login state
   useEffect(() => {
-    const user = localStorage.getItem("token");
-    if(user){
-      setIsLogin(true);
-      setUser(JSON.parse(user));
-    }
-    else{
-      setIsLogin(false);
-      setUser(null);
-    }
+    console.log("Login State Changed: ", isLogin);
   }, [isLogin]);
+  
 
   // logout function
   const logout = () => {

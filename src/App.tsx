@@ -24,8 +24,8 @@ const App = () => {
   const PrivateRoute = () => {
     // Check if user token exists in localStorage
     const user = localStorage.getItem("token");
-    // If user exists, render child routes (Outlet), otherwise redirect to signin
-    return user ? <Outlet /> : <Navigate to={"/signin"} />
+    // If user exists, render child routes (Outlet), otherwise redirect to login
+    return user ? <Outlet /> : <Navigate to={"/login"} />
   }
 
   // Return the main app structure
@@ -40,7 +40,7 @@ const App = () => {
           {/* Routes without navigation bar */}
           <Route element={<NoNavLayout />}>
             {/* Login page route */}
-            <Route path='/signin' element={<LoginPage />} />
+            <Route path='/login' element={<LoginPage />} />
             {/* Signup page route */}
             <Route path='/signup' element={<SignupPage />} />
           </Route>
