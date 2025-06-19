@@ -1,7 +1,5 @@
 // Import necessary Material-UI components for navigation bar
-import { AppBar, Toolbar, Box, Button, IconButton, Menu, MenuItem, ClickAwayListener } from "@mui/material";
-// Import menu icon from Material-UI icons
-import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Toolbar, Box, Button, IconButton, Menu, MenuItem } from "@mui/material";
 // Import account circle icon for logged in users
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 // Import React hooks for state and side effects
@@ -13,7 +11,7 @@ import MyContext from "../context/context";
 // Styles object to store reusable styles
 const baseButtonStyle = {
   padding: "8px 16px",
-  width: "100%", 
+  width: "100%",
   justifyContent: "flex-start",
   textTransform: "none",
   borderRadius: "8px",
@@ -27,7 +25,7 @@ const styles: Record<string, any> = {
   getHiredButton: {
     backgroundColor: "#FFD700",
     color: "#000",
-    "&:hover": { 
+    "&:hover": {
       backgroundColor: "#FFC107",
       transform: "translateY(-2px)",
       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
@@ -37,7 +35,7 @@ const styles: Record<string, any> = {
   authButton: {
     backgroundColor: "#1E90FF",
     color: "#fff",
-    "&:hover": { 
+    "&:hover": {
       backgroundColor: "#007BFF",
       transform: "translateY(-2px)",
       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
@@ -47,9 +45,9 @@ const styles: Record<string, any> = {
   logoutButton: {
     backgroundColor: "#D84040",
     color: "#fff",
-    "&:hover": { 
+    "&:hover": {
       backgroundColor: "#A31D1D",
-      transform: "translateY(-2px)", 
+      transform: "translateY(-2px)",
       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
     },
   },
@@ -57,7 +55,7 @@ const styles: Record<string, any> = {
   profileButton: {
     backgroundColor: "#1E90FF",
     color: "#fff",
-    "&:hover": { 
+    "&:hover": {
       backgroundColor: "#007BFF",
       transform: "translateY(-2px)",
       boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
@@ -71,7 +69,7 @@ const styles: Record<string, any> = {
     minWidth: 200,
     padding: "8px",
     "& .MuiList-root": {
-      display:"flex",
+      display: "flex",
       flexDirection: "column",
       gap: "8px",
     }
@@ -90,7 +88,7 @@ const styles: Record<string, any> = {
 const Navbar = () => {
   // State for menu anchor element
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { isLogin, setIsLogin, user, setUser, logout } = useContext(MyContext)!;
+  const { isLogin, user, logout } = useContext(MyContext)!;
   // State for loading status
   const [isLoading, setIsLoading] = useState(true);
   // Hook for programmatic navigation
@@ -110,9 +108,9 @@ const Navbar = () => {
     logout();
     handleMenuClose();
   };
-  
+
   useEffect(() => {
-    if(!isLogin){
+    if (!isLogin) {
       navigate("/");
     }
   }, [isLogin]);
@@ -175,7 +173,7 @@ const Navbar = () => {
             // Show user menu if logged in
             <Box>
               {/* User icon button */}
-              <IconButton 
+              <IconButton
                 onClick={handleMenuOpen}
                 sx={{
                   transition: "transform 0.2s ease-in-out",
@@ -183,25 +181,17 @@ const Navbar = () => {
                 }}
               >
                 {/* Conditional rendering of user profile image or default icon */}
-                { user?.profileImageUrl ? (
-                    <img 
-                        src={user.profileImageUrl} 
-                        alt="profile image" 
-                        style={{ 
-                            width: "2.5rem", 
-                            height: "2.5rem", 
-                            borderRadius: "50%",
-                            objectFit: "cover" // Ensure image covers the area properly
-                        }} 
-                        onError={(e) => {
-                            console.error("Image failed to load:", user.profileImageUrl);
-                            // Fallback to default icon on error
-                            e.currentTarget.style.display = 'none';
-                            // You might want to set some state here to show the AccountCircleIcon
-                        }}
-                    /> 
+                {isLogin ? (
+                  user?.profileImageUrl ?
+                    <img src={user.profileImageUrl} alt="profile image" style={{ height: "40px", borderRadius: "50%" }}
+                      onError={(e) => {
+                        // if internet image is not loaded the fall back to default
+                        (e.target as HTMLImageElement).src = defaultImg;
+                      }}
+                    />
+                    : <img src={defaultImg} alt="profile image" style={{ height: "40px", borderRadius: "50%" }} />
                 ) : (
-                    <img src={defaultImg} alt="profile image" style={{ height: "40px" }} />
+                  <img src={defaultImg} alt="profile image" style={{ height: "40px", borderRadius: "50%" }} />
                 )}
               </IconButton>
               {/* Menu component */}
@@ -215,7 +205,7 @@ const Navbar = () => {
                 disableScrollLock
                 disableAutoFocusItem
               >
-                <MenuItem 
+                <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     navigate("/profile");
@@ -224,9 +214,9 @@ const Navbar = () => {
                 >
                   Profile
                 </MenuItem>
-                <MenuItem 
+                <MenuItem
                   onClick={handleLogout}
-                  sx={{ ...styles.menuItem, ...styles.logoutButton }}
+                  sx={{ ...styles.menuItem, ...styles.logoutButton, marginTop: "10px" }}
                 >
                   Logout
                 </MenuItem>
@@ -236,23 +226,28 @@ const Navbar = () => {
         </Box>
 
         {/* Mobile Menu */}
-        <Box sx={{ display: { xs: "block", sm: "none" }, position: "relative", padding: {xs: "0px 8px", sm: "0px"}, margin: "0 auto" }}>
+        <Box sx={{ display: { xs: "block", sm: "none" }, position: "relative", padding: { xs: "0px 8px", sm: "0px" }, margin: "0 auto" }}>
           {/* Mobile menu toggle button */}
-          <IconButton 
+          <IconButton
             onClick={handleMenuOpen}
-            sx={{ 
-              padding: 0, 
+            sx={{
+              padding: 0,
               margin: 0,
               transition: "transform 0.2s ease-in-out",
               "&:hover": { transform: "scale(1.1)" }
             }}
           >
             {isLogin ? (
-              user?.profileImageUrl ? 
-              <img src={user.profileImageUrl} alt="profile image" style={{ height: "40px", borderRadius: "50%" }} /> 
-              : <img src={defaultImg} alt="profile image" style={{ height: "40px", borderRadius: "50%" }}/>
+              user?.profileImageUrl ?
+                <img src={user.profileImageUrl} alt="profile image" style={{ height: "40px", borderRadius: "50%" }}
+                  onError={(e) => {
+                    // if internet image is not loaded the fall back to default
+                    (e.target as HTMLImageElement).src = defaultImg;
+                  }}
+                />
+                : <img src={defaultImg} alt="profile image" style={{ height: "40px", borderRadius: "50%" }} />
             ) : (
-              <AccountCircleIcon sx={{ color: "#000", fontSize: "2rem" }} />
+              <img src={defaultImg} alt="profile image" style={{ height: "40px", borderRadius: "50%" }} />
             )}
           </IconButton>
 
@@ -271,7 +266,7 @@ const Navbar = () => {
             disableAutoFocusItem
           >
             {/* Get Hired button in mobile menu */}
-            <MenuItem 
+            <MenuItem
               onClick={() => {
                 handleMenuClose();
                 navigate('/get_hired_form');
@@ -285,7 +280,7 @@ const Navbar = () => {
             {!isLogin ? (
               <Box>
                 {/* Sign up button */}
-                <MenuItem 
+                <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     navigate("/signup");
@@ -295,7 +290,7 @@ const Navbar = () => {
                   Sign Up
                 </MenuItem>
                 {/* Login button */}
-                <MenuItem 
+                <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     navigate("/login");
@@ -308,7 +303,7 @@ const Navbar = () => {
             ) : (
               <Box>
                 {/* Profile button for logged in users */}
-                <MenuItem 
+                <MenuItem
                   onClick={() => {
                     handleMenuClose();
                     navigate("/profile");
@@ -318,9 +313,9 @@ const Navbar = () => {
                   Profile
                 </MenuItem>
                 {/* Logout button for logged in users */}
-                <MenuItem 
+                <MenuItem
                   onClick={handleLogout}
-                  sx={{ ...styles.menuItem, ...styles.logoutButton }}
+                  sx={{ ...styles.menuItem, ...styles.logoutButton, marginTop:"10px" }}
                 >
                   Logout
                 </MenuItem>

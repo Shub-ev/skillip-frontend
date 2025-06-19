@@ -17,7 +17,7 @@ const GetHiredForm = () => {
     const [ open, setOpen ] = useState(false);
     const [ error, setError ] = useState<string | null>(null);
     const [ success, setSuccess ] = useState(false);
-    const { updateProfileImage } = useContext(MyContext);
+    const { updateProfileImage } = useContext(MyContext)!;
 
     const [formData, setFormData] = useState<FormData>({
         username: "",

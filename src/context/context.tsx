@@ -13,7 +13,7 @@ import { LoginData, UserInterface } from "../interfaces";
 // uploadProfileImage: Function to handle profile image uploads
 interface ContextType {
   isLogin: boolean | null;
-  setIsLogin: React.Dispatch<React.SetStateAction<boolean | null>>;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   user: UserInterface | null;
   setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>;
   logout: () => void;
@@ -29,8 +29,8 @@ const MyContext = createContext<ContextType | null>(null);
 // 4. Create Provider component that wraps the app and provides context values
 // children: React nodes that will have access to context values
 export const MyProvider = ({ children }: { children: React.ReactNode }) => {
-  // Initialize login state as false
-  const [isLogin, setIsLogin] = useState<boolean | null>(localStorage.getItem("token") != "" || false);
+  // Initialize login state as falses
+  const [isLogin, setIsLogin] = useState<boolean>(!!localStorage.getItem("user"));
   const [user, setUser] = useState<UserInterface | null>(null);
 
   // default profile image URL
@@ -38,10 +38,18 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   const defaultProfileImage = "/images/user.png";
 
   useEffect(() => {
-    if(isLogin){
-      setUser(JSON.parse(localStorage.getItem("token") || ""));
+    if (isLogin) {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error("Error parsing user from localStorage:", error);
+        localStorage.removeItem("user");
+      }
     }
-  }, [])
+  }, []);  
 
   useEffect(() => {
     console.log("Login State Changed: ", isLogin);
@@ -51,7 +59,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   // logout function
   const logout = () => {
     try{
-      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       setIsLogin(false);
       setUser(null);
     }
@@ -80,7 +88,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         data.profileImageUrl = defaultProfileImage;
       }
 
-      localStorage.setItem("token", JSON.stringify(data));
+      localStorage.setItem("user", JSON.stringify(data));
       setIsLogin(true);
       // console.log(data);
       setUser(data);
@@ -121,7 +129,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
             {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem("user")}`,
                 },
                 body: formData,
                 signal: controller.signal
@@ -142,17 +150,21 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         if (!response.ok) {
             throw new Error(data.message || `Server error: ${response.status}`);
         }
-
-        console.log("Old image URL:", user?.profileImageUrl);
         
         // Update user state
-        setUser((prevUser) => prevUser ? {
-          ...prevUser,
-          profileImageUrl: data.profileImageUrl,
-          imageUrlExpiration: data.imageUrlExpiration
-        } : null);
+        setUser((prevUser) => {
+          const updatedUser = prevUser ? {
+            ...prevUser,
+            profileImageUrl: data.profileImageUrl,
+            imageUrlExpiration: data.imageUrlExpiration
+          } : null;
         
-        console.log("New image URL:", data.profileImageUrl);
+          if (updatedUser) {
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+          }
+
+          return updatedUser;
+        });
 
         return data;
 

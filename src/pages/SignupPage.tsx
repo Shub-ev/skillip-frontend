@@ -48,7 +48,7 @@ import { useNavigate } from "react-router-dom";
                     return res.json();
                 })
                 .then(data => {
-                    localStorage.setItem("token", JSON.stringify(data));
+                    localStorage.setItem("user", JSON.stringify(data));
                     setError(null);
                     setOpen(true);
                     setTimeout(() => {
